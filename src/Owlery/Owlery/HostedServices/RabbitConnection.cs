@@ -111,7 +111,7 @@ namespace Owlery.HostedServices
 
             if (publisherAttribute.DestinationQueueName != null)
             {
-            this.logger.LogInformation($"Declaring queue {publisherAttribute.DestinationQueueName}");
+                this.logger.LogInformation($"Declaring queue {publisherAttribute.DestinationQueueName}");
                 model.QueueDeclare(
                     publisherAttribute.DestinationQueueName,
                     publisherAttribute.DestinationQueueDurable,
@@ -122,7 +122,7 @@ namespace Owlery.HostedServices
 
             if (publisherAttribute.BindDestinationQueueAndExchange)
             {
-            this.logger.LogInformation($"Binding queue {publisherAttribute.DestinationQueueName} to exchange {publisherAttribute.ExchangeName} via routing key {publisherAttribute.RoutingKey}");
+                this.logger.LogInformation($"Binding queue {publisherAttribute.DestinationQueueName} to exchange {publisherAttribute.ExchangeName} via routing key {publisherAttribute.RoutingKey}");
                 model.QueueBind(
                     publisherAttribute.DestinationQueueName,
                     publisherAttribute.ExchangeName,
