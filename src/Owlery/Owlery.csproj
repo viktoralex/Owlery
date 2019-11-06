@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>Owlery</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>Viktor Alex Brynjarsson</Authors>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 

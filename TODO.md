@@ -1,4 +1,4 @@
-- [ ] Create a NuGet package
+- [x] Create a NuGet package
 - [ ] Tests
 
 Ideas
