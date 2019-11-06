@@ -11,13 +11,13 @@ namespace Owlery.Models
 {
     public class RabbitConsumer
     {
-        private readonly RabbitConsumerMethod method;
+        private readonly ConsumerMethod method;
         private readonly IModel model;
         private readonly IServiceProvider serviceProvider;
         private readonly ILogger logger;
 
         public RabbitConsumer(
-            RabbitConsumerMethod method,
+            ConsumerMethod method,
             IModel model,
             IServiceProvider serviceProvider,
             ILogger<RabbitConsumer> logger)
@@ -122,7 +122,7 @@ namespace Owlery.Models
             }
         }
 
-        private object[] GetParameterList(RabbitConsumerMethod method, BasicDeliverEventArgs eventArgs, IModel model)
+        private object[] GetParameterList(ConsumerMethod method, BasicDeliverEventArgs eventArgs, IModel model)
         {
             List<object> paramList = new List<object>();
             foreach (var param in method.Method.GetParameters())

@@ -39,7 +39,7 @@ namespace Owlery.HostedServices
             var model = this.connection.CreateModel();
 
             // Find all controllers and wire them up
-            foreach (var consumerMethod in RabbitReflections.GetControllerConsumerMethods())
+            foreach (var consumerMethod in Reflections.GetControllerConsumerMethods())
             {
                 this.consumers.Add(
                     new RabbitConsumer(

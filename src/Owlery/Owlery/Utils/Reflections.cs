@@ -6,11 +6,11 @@ using Owlery.Models;
 
 namespace Owlery.Utils
 {
-    public static class RabbitReflections
+    public static class Reflections
     {
-        public static IEnumerable<RabbitConsumerMethod> GetControllerConsumerMethods()
+        public static IEnumerable<ConsumerMethod> GetControllerConsumerMethods()
         {
-            var methods = new List<RabbitConsumerMethod>();
+            var methods = new List<ConsumerMethod>();
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 foreach (var type in assembly.GetTypes())
@@ -28,7 +28,7 @@ namespace Owlery.Utils
                             ).FirstOrDefault();
 
                             methods.Add(
-                                new RabbitConsumerMethod(
+                                new ConsumerMethod(
                                     method, type, consumerAttribute, publisherAttribute));
                         }
                     }

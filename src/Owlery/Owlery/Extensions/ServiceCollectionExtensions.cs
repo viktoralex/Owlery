@@ -4,7 +4,7 @@ using Owlery.HostedServices;
 
 namespace Owlery.Extensions
 {
-    public static class RabbitServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
     {
         public static void AddRabbitControllers(this IServiceCollection services)
         {
