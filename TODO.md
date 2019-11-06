@@ -1,4 +1,4 @@
-
+[ ] - Create NuGet package
 
 Ideas
 =====
