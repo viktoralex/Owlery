@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Owlery.Utils;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -63,7 +64,7 @@ namespace Owlery.Models
                         this.method.PublisherAttributes.ExchangeName,
                         this.method.PublisherAttributes.RoutingKey,
                         null,
-                        PublisherBody(returned));
+                        BodyConverter.ConvertToByteArray(returned));
                 }
             }
             // TODO: Acknowledgements
@@ -129,22 +130,7 @@ namespace Owlery.Models
             {
                 if (param.IsDefined(typeof(FromBodyAttribute), false))
                 {
-                    if (param.ParameterType == typeof(byte[]))
-                    {
-                        paramList.Add(eventArgs.Body);
-                    }
-                    else if (param.ParameterType == typeof(string))
-                    {
-                        paramList.Add(Encoding.UTF8.GetString(eventArgs.Body));
-                    }
-                    else
-                    {
-                        // TODO: other converters
-                        paramList.Add(
-                            JsonConvert.DeserializeObject(
-                                Encoding.UTF8.GetString(eventArgs.Body),
-                                param.ParameterType));
-                    }
+                    paramList.Add(BodyConverter.ConvertFromByteArray(eventArgs.Body, param.ParameterType));
                 }
                 else if (param.IsDefined(typeof(FromDeliveryTagAttribute), false))
                 {
@@ -177,21 +163,6 @@ namespace Owlery.Models
             }
 
             return paramList.ToArray();
-        }
-
-        private byte[] PublisherBody(object returned)
-        {
-            if (returned.GetType() == typeof(byte[]))
-            {
-                return (byte[])returned;
-            }
-            else if (returned.GetType() == typeof(string))
-            {
-                return Encoding.UTF8.GetBytes((string)returned);
-            }
-
-            // TODO: other converters
-            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(returned));
         }
     }
 }
