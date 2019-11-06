@@ -1,5 +1,6 @@
 - [x] Create a NuGet package
 - [ ] Tests
+- [ ] A way to publish message easily (with optional queue/exchange/binding declaration)
 
 Ideas
 =====
