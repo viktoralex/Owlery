@@ -4,7 +4,11 @@ Owlery
 The Owlery library provides .NET Core developers the ability to consume and
 publish to RabbitMQ queues with the same ease as creating a new ApiController.
 
-# Example
+# Examples
+
+The following are a few examples of how Owlery can help you.
+
+## Defining queue consumers
 
 The following is added in the `ConfigureServices`  method in the `Startup.cs` 
 file.
@@ -41,8 +45,8 @@ public class OwleryController
         this.logger = logger;
     }
 
-    [RabbitConsumer("tester.test")]
-    [RabbitPublisher("testExc", "tester.another.test")]
+    [RabbitConsumer(queueName: "tester.test")]
+    [RabbitPublisher(routingKey: "tester.another.test")]
     public AModel testConsumer()
     {
         logger.LogInformation($"Creating model");
@@ -52,7 +56,7 @@ public class OwleryController
         };
     }
 
-    [RabbitConsumer("tester.another.test")]
+    [RabbitConsumer(queueName: "tester.another.test")]
     public void anotherTestConsumer([FromBody] AModel aModel)
     {
         logger.LogInformation($"Received a model {aModel}");
@@ -68,5 +72,55 @@ public class AModel
     {
         return $"[AModel AnInteger: {this.AnInteger}, AString: {this.AString}]";
     }
+}
+```
+
+## Declaring queues
+
+Automatically declare queues, exchanges and bind queues to exchanges when the 
+application starts using configuration only.
+
+In `appsettings.json` or any other configuration source define the following
+
+```json
+{
+  ...
+  "Owlery": {
+    "Queues": [
+      {
+        "QueueName": "tester.test"
+      },
+      {
+        "QueueName": "tester.another.test"
+      }
+    ],
+    "Exchanges": [
+      {
+        "ExchangeName": "testExc"
+      }
+    ],
+    "Bindings": [
+      {
+        "QueueName": "tester.another.test",
+        "ExchangeName": "testExc",
+        "RoutingKey": "tester.routingKey"
+      }
+    ]
+  }
+}
+```
+
+The following is added in the `ConfigureServices`  method in the `Startup.cs` 
+file.
+
+```C#
+using Owlery.Extensions;
+
+...
+
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddRabbitControllers(Configuration.GetSection("Owlery"));
+    ...
 }
 ```
