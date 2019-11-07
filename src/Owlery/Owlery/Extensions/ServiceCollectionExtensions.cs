@@ -1,6 +1,8 @@
 using System;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Owlery.HostedServices;
+using Owlery.Models.Settings;
 
 namespace Owlery.Extensions
 {
@@ -21,6 +23,13 @@ namespace Owlery.Extensions
                     }
                 }
             }
+        }
+
+        public static void AddRabbitControllers(this IServiceCollection services, IConfigurationSection configSection)
+        {
+            services.Configure<OwlerySettings>(configSection);
+
+            services.AddRabbitControllers();
         }
     }
 }

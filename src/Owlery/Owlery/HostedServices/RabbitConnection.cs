@@ -7,21 +7,28 @@ using RabbitMQ.Client;
 using Owlery.Utils;
 using Owlery.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Owlery.Models.Settings;
 
 namespace Owlery.HostedServices
 {
     public class RabbitConnection : IHostedService
     {
         private readonly IServiceProvider serviceProvider;
+        private readonly OwlerySettings settings;
         private readonly ILogger logger;
         private readonly ILoggerFactory loggerFactory;
 
         private IConnection connection;
         private List<RabbitConsumer> consumers;
 
-        public RabbitConnection(IServiceProvider serviceProvider, ILoggerFactory factory)
+        public RabbitConnection(
+            IServiceProvider serviceProvider,
+            IOptions<OwlerySettings> settings,
+            ILoggerFactory factory)
         {
             this.serviceProvider = serviceProvider;
+            this.settings = settings.Value;
             this.logger = factory.CreateLogger<RabbitConnection>();
             this.loggerFactory = factory;
 
@@ -32,9 +39,7 @@ namespace Owlery.HostedServices
         {
             this.logger.LogInformation("Creating RabbitMQ connection.");
 
-            var factory = new ConnectionFactory() {
-                // TODO: customizable connection
-            };
+            var factory = RabbitConnectionFactory();
             this.connection = factory.CreateConnection();
             var model = this.connection.CreateModel();
 
@@ -58,6 +63,28 @@ namespace Owlery.HostedServices
             this.connection.Close();
 
             return Task.CompletedTask;
+        }
+
+        private ConnectionFactory RabbitConnectionFactory()
+        {
+            var factory = new ConnectionFactory();
+
+            if (this.settings.UserName != null)
+                factory.UserName = this.settings.UserName;
+
+            if (this.settings.Password != null)
+                factory.Password = this.settings.Password;
+
+            if (this.settings.VirtualHost != null)
+                factory.VirtualHost = this.settings.VirtualHost;
+
+            if (this.settings.HostName != null)
+                factory.HostName = this.settings.HostName;
+
+            if (this.settings.Port.HasValue)
+                factory.Port = this.settings.Port.Value;
+
+            return factory;
         }
     }
 }
