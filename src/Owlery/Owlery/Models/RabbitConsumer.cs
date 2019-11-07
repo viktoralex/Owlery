@@ -37,7 +37,7 @@ namespace Owlery.Models
             rabbitConsumer.Received += this.RecievedEventHandler;
 
             var autoAck = this.method.ConsumerAttributes.AcknowledgementType == AcknowledgementType.AutoAck;
-            model.BasicConsume(this.method.ConsumerAttributes.QueueName, autoAck, rabbitConsumer);
+            model.BasicConsume(this.method.ConsumerAttributes.QueueName, autoAck, consumerTag: "", noLocal: false, exclusive: false, arguments: null, rabbitConsumer);
         }
 
         public void RecievedEventHandler(object ch, BasicDeliverEventArgs ea)
