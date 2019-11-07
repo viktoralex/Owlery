@@ -9,11 +9,13 @@ using Owlery.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Owlery.Models.Settings;
+using Owlery.Services;
 
 namespace Owlery.HostedServices
 {
     public class RabbitConnection : IHostedService
     {
+        private readonly IDeclarationService declarationService;
         private readonly IServiceProvider serviceProvider;
         private readonly OwlerySettings settings;
         private readonly ILogger logger;
@@ -23,10 +25,12 @@ namespace Owlery.HostedServices
         private List<RabbitConsumer> consumers;
 
         public RabbitConnection(
+            IDeclarationService declarationService,
             IServiceProvider serviceProvider,
             IOptions<OwlerySettings> settings,
             ILoggerFactory factory)
         {
+            this.declarationService = declarationService;
             this.serviceProvider = serviceProvider;
             this.settings = settings.Value;
             this.logger = factory.CreateLogger<RabbitConnection>();
@@ -42,6 +46,8 @@ namespace Owlery.HostedServices
             var factory = RabbitConnectionFactory();
             this.connection = factory.CreateConnection();
             var model = this.connection.CreateModel();
+
+            this.declarationService.DeclareAll(model);
 
             // Find all controllers and wire them up
             foreach (var consumerMethod in Reflections.GetControllerConsumerMethods())

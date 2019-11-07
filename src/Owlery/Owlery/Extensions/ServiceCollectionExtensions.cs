@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Owlery.HostedServices;
 using Owlery.Models.Settings;
+using Owlery.Services;
 
 namespace Owlery.Extensions
 {
@@ -11,6 +12,7 @@ namespace Owlery.Extensions
         public static void AddRabbitControllers(this IServiceCollection services)
         {
             services.AddHostedService<RabbitConnection>();
+            services.AddTransient<IDeclarationService, DeclarationService>();
 
             // Find all controllers and register them as transient services
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())

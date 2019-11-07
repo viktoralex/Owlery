@@ -28,8 +28,6 @@ namespace Owlery.Models
             this.serviceProvider = serviceProvider;
             this.logger = logger;
 
-            this.ConsumerDeclarations();
-            this.PublisherDeclarations();
             this.logger.LogInformation(
                 $"Registering method {this.method.Method.Name} in {this.method.ParentType.Name} as consumer" +
                 $"{(this.method.PublisherAttributes == null ? "" : " and publisher")}.");
@@ -72,55 +70,6 @@ namespace Owlery.Models
             // - 2. Nack if exception
             // - 3. others?
             model.BasicAck(ea.DeliveryTag, false);
-        }
-
-        private void ConsumerDeclarations()
-        {
-            this.logger.LogInformation($"Declaring queue {this.method.ConsumerAttributes.QueueName}");
-            this.model.QueueDeclare(
-                queue: this.method.ConsumerAttributes.QueueName,
-                durable: this.method.ConsumerAttributes.Durable,
-                exclusive: this.method.ConsumerAttributes.Exclusive,
-                autoDelete: this.method.ConsumerAttributes.AutoDelete,
-                arguments: this.method.ConsumerAttributes.Arguments);
-        }
-
-        private void PublisherDeclarations()
-        {
-            if (this.method.PublisherAttributes == null)
-                return;
-
-            this.logger.LogInformation($"Declaring exchange {this.method.PublisherAttributes.ExchangeName}");
-            model.ExchangeDeclare(
-                exchange: this.method.PublisherAttributes.ExchangeName,
-                type: this.method.PublisherAttributes.ExchangeType,
-                durable: this.method.PublisherAttributes.ExchangeDurable,
-                autoDelete: this.method.PublisherAttributes.ExchangeAutoDelete,
-                arguments: this.method.PublisherAttributes.ExchangeArguments);
-
-            if (this.method.PublisherAttributes.DestinationQueueName != null)
-            {
-                this.logger.LogInformation($"Declaring queue {this.method.PublisherAttributes.DestinationQueueName}");
-                model.QueueDeclare(
-                    this.method.PublisherAttributes.DestinationQueueName,
-                    this.method.PublisherAttributes.DestinationQueueDurable,
-                    this.method.PublisherAttributes.DestinationQueueExclusive,
-                    this.method.PublisherAttributes.DestinationQueueAutoDelete,
-                    this.method.PublisherAttributes.DestinationQueueArguments);
-            }
-
-            if (this.method.PublisherAttributes.BindDestinationQueueAndExchange)
-            {
-                this.logger.LogInformation(
-                    $"Binding queue {this.method.PublisherAttributes.DestinationQueueName} to exchange " +
-                    $"{this.method.PublisherAttributes.ExchangeName} via routing key " +
-                    $"{this.method.PublisherAttributes.RoutingKey}");
-                model.QueueBind(
-                    this.method.PublisherAttributes.DestinationQueueName,
-                    this.method.PublisherAttributes.ExchangeName,
-                    this.method.PublisherAttributes.RoutingKey,
-                    this.method.PublisherAttributes.BindArguments);
-            }
         }
 
         private object[] GetParameterList(ConsumerMethod method, BasicDeliverEventArgs eventArgs, IModel model)
