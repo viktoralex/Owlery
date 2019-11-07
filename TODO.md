@@ -1,6 +1,8 @@
 - [x] Create a NuGet package
+- [ ] Queue/exchange/binding declarations in configurations
 - [ ] Tests
-- [ ] A way to publish message easily (with optional queue/exchange/binding declaration)
+- [ ] A way to publish message easily
+- [ ] More Dependency Injection
 
 Ideas
 =====
