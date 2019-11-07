@@ -65,7 +65,7 @@ namespace Owlery.Tests.Models
 
             // THEN
             var service = serviceCollection.GetRequiredService<ConsumerController>();
-            Assert.Equal(true, service.ConsumeCalled);
+            Assert.True(service.ConsumeCalled);
         }
     }
 }
