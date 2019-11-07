@@ -8,14 +8,14 @@ namespace Owlery.Utils
     {
         public static byte[] ConvertToByteArray(object returned)
         {
+            if (returned == null)
+                return null;
+
             if (returned.GetType() == typeof(byte[]))
-            {
                 return (byte[])returned;
-            }
-            else if (returned.GetType() == typeof(string))
-            {
+
+            if (returned.GetType() == typeof(string))
                 return Encoding.UTF8.GetBytes((string)returned);
-            }
 
             // TODO: other converters
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(returned));
@@ -23,14 +23,14 @@ namespace Owlery.Utils
 
         public static object ConvertFromByteArray(byte[] arr, Type type)
         {
-            if (type == typeof(byte[]))
-            {
+            if (arr == null)
                 return arr;
-            }
+
+            if (type == typeof(byte[]))
+                return arr;
+
             else if (type == typeof(string))
-            {
                 return Encoding.UTF8.GetString(arr);
-            }
 
             // TODO: other converters
             return JsonConvert.DeserializeObject(
