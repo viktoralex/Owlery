@@ -65,10 +65,6 @@ namespace Owlery.Models
                         BodyConverter.ConvertToByteArray(returned));
                 }
             }
-            // TODO: Acknowledgements
-            // - 1. Auto ack
-            // - 2. Nack if exception
-            // - 3. others?
             model.BasicAck(ea.DeliveryTag, false);
         }
 

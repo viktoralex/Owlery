@@ -17,7 +17,6 @@ namespace Owlery.Utils
             if (returned.GetType() == typeof(string))
                 return Encoding.UTF8.GetBytes((string)returned);
 
-            // TODO: other converters
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(returned));
         }
 
@@ -32,7 +31,6 @@ namespace Owlery.Utils
             else if (type == typeof(string))
                 return Encoding.UTF8.GetString(arr);
 
-            // TODO: other converters
             return JsonConvert.DeserializeObject(
                 Encoding.UTF8.GetString(arr),
                 type);

@@ -3,6 +3,8 @@
 - [ ] Tests
 - [ ] A way to publish message easily
 - [ ] More Dependency Injection
+- [ ] Other converters than JSON
+- [ ] Acknowledgement of messages in consumers, configurable
 
 Ideas
 =====
