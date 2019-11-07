@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5A602565-0C2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owlery", "src\Owlery\Owlery.csproj", "{913D0D29-3602-4E3F-9E08-980BCBE1A42F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9B463092-85A4-42DC-BB33-E50F7F18F866}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owlery.Tests", "test\Owlery.Tests\Owlery.Tests.csproj", "{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +36,21 @@ Global
 		{913D0D29-3602-4E3F-9E08-980BCBE1A42F}.Release|x64.Build.0 = Release|Any CPU
 		{913D0D29-3602-4E3F-9E08-980BCBE1A42F}.Release|x86.ActiveCfg = Release|Any CPU
 		{913D0D29-3602-4E3F-9E08-980BCBE1A42F}.Release|x86.Build.0 = Release|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Debug|x64.Build.0 = Debug|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Debug|x86.Build.0 = Debug|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Release|x64.ActiveCfg = Release|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Release|x64.Build.0 = Release|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Release|x86.ActiveCfg = Release|Any CPU
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{913D0D29-3602-4E3F-9E08-980BCBE1A42F} = {5A602565-0C2C-430B-AB0D-060C6DB2B796}
+		{6AB8B416-C332-4EE2-8C5B-97F79E2CBCE3} = {9B463092-85A4-42DC-BB33-E50F7F18F866}
 	EndGlobalSection
 EndGlobal
