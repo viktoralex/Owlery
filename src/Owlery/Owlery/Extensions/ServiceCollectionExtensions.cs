@@ -11,8 +11,13 @@ namespace Owlery.Extensions
     {
         public static void AddRabbitControllers(this IServiceCollection services)
         {
-            services.AddHostedService<RabbitConnection>();
+            // Add RabbitConnection as singleton to allow other services to
+            // access it.
+            services.AddSingleton<RabbitConnection>();
+            services.AddHostedService<BackgroundServiceStarter<RabbitConnection>>();
+
             services.AddTransient<IDeclarationService, DeclarationService>();
+            services.AddTransient<IRabbitService, RabbitService>();
 
             // Find all controllers and register them as transient services
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())

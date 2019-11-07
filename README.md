@@ -75,6 +75,33 @@ public class AModel
 }
 ```
 
+## Publishing to an exchange
+
+To publish a message to an exchange Dependency Injection is used. First we
+require the IRabbitService in the constructor.
+
+```C#
+using Owlery.Services;
+
+...
+
+private readonly IRabbitService rabbitService;
+
+public ClassConstructor(
+    IRabbitService rabbitService)
+{
+    this.rabbitService = rabbitService;
+}
+```
+
+Then we can use the `Publish` method to publish the message
+
+```C#
+this.rabbitService.Publish(routingKey: "tester.test", body: "Message body", exchange: "");
+```
+
+But we can use any JSONSerializable object as the body, or an array of bytes directly.
+
 ## Declaring queues
 
 Automatically declare queues, exchanges and bind queues to exchanges when the 

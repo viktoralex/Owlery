@@ -64,6 +64,11 @@ namespace Owlery.HostedServices
             return Task.CompletedTask;
         }
 
+        public IModel GetModel()
+        {
+            return this.connection.CreateModel();
+        }
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             this.connection.Close();
