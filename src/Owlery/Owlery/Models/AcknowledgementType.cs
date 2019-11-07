@@ -17,5 +17,9 @@ namespace Owlery.Models
         /// Acknowledge on successful publish of response.
         /// </summary>
         AckOnPublish,
+        /// <summary>
+        /// Don't acknowledge automatically, allow the consumer method to acknowledge.
+        /// </summary>
+        ManualAck,
     }
 }
