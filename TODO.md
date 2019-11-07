@@ -4,7 +4,7 @@
 - [x] A way to publish message easily
 - [ ] More Dependency Injection
 - [ ] Other converters than JSON
-- [ ] Acknowledgement of messages in consumers, configurable
+- [x] Acknowledgement of messages in consumers, configurable
 - [ ] Make attributes easier to use (set queue priority, etc.)
 
 Ideas

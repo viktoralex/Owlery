@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -35,7 +36,8 @@ namespace Owlery.Models
             var rabbitConsumer = new EventingBasicConsumer(model);
             rabbitConsumer.Received += this.RecievedEventHandler;
 
-            model.BasicConsume(this.method.ConsumerAttributes.QueueName, false, rabbitConsumer);
+            var autoAck = this.method.ConsumerAttributes.AcknowledgementType == AcknowledgementType.AutoAck;
+            model.BasicConsume(this.method.ConsumerAttributes.QueueName, autoAck, rabbitConsumer);
         }
 
         public void RecievedEventHandler(object ch, BasicDeliverEventArgs ea)
@@ -43,29 +45,59 @@ namespace Owlery.Models
             this.logger.LogInformation(
                 $"Received message {ea.DeliveryTag} from {ea.Exchange} with {ea.RoutingKey}. Invoking " +
                 $"{this.method.Method.Name} in {this.method.ParentType.Name}.");
-            var body = ea.Body;
-            using (var scope = this.serviceProvider.CreateScope())
+
+            try
             {
-                var consumerService = scope.ServiceProvider.GetRequiredService(this.method.ParentType);
-
-                var parameters = GetParameterList(this.method, ea, model);
-                var returned = this.method.Method.Invoke(
-                    consumerService, parameters);
-
-                if (this.method.PublisherAttributes != null)
+                using (var scope = this.serviceProvider.CreateScope())
                 {
-                    this.logger.LogInformation(
-                        $"Publishing result of {ea.DeliveryTag} from {this.method.Method.Name} in " +
-                        $"{this.method.ParentType.Name} to {this.method.PublisherAttributes.ExchangeName} with " +
-                        $"{this.method.PublisherAttributes.RoutingKey}");
-                    model.BasicPublish(
-                        this.method.PublisherAttributes.ExchangeName,
-                        this.method.PublisherAttributes.RoutingKey,
-                        null,
-                        BodyConverter.ConvertToByteArray(returned));
+                    var consumerService = scope.ServiceProvider.GetRequiredService(this.method.ParentType);
+
+                    var parameters = GetParameterList(this.method, ea, model);
+                    var returned = this.method.Method.Invoke(
+                        consumerService, parameters);
+
+                    if (this.method.ConsumerAttributes.AcknowledgementType == AcknowledgementType.AckOnInvoke)
+                    {
+                        this.logger.LogInformation(
+                            $"Acknowledging message {ea.DeliveryTag} after invocation.");
+                        model.BasicAck(ea.DeliveryTag, false);
+                    }
+
+                    if (this.method.PublisherAttributes != null)
+                    {
+                        this.logger.LogInformation(
+                            $"Publishing result of {ea.DeliveryTag} from {this.method.Method.Name} in " +
+                            $"{this.method.ParentType.Name} to {this.method.PublisherAttributes.ExchangeName} with " +
+                            $"{this.method.PublisherAttributes.RoutingKey}");
+                        model.BasicPublish(
+                            this.method.PublisherAttributes.ExchangeName,
+                            this.method.PublisherAttributes.RoutingKey,
+                            null,
+                            BodyConverter.ConvertToByteArray(returned));
+                    }
+
+                    if (this.method.ConsumerAttributes.AcknowledgementType == AcknowledgementType.AckOnPublish)
+                    {
+                        this.logger.LogInformation(
+                            $"Acknowledging message {ea.DeliveryTag} after publish.");
+                        model.BasicAck(ea.DeliveryTag, false);
+                    }
                 }
             }
-            model.BasicAck(ea.DeliveryTag, false);
+            catch (TargetInvocationException exc)
+            {
+                this.logger.LogError(
+                    exc.InnerException,
+                    $"Message {ea.DeliveryTag} threw exception when consumer was invoked, will nack.");
+                model.BasicNack(ea.DeliveryTag, false, this.method.ConsumerAttributes.NackOnException);
+            }
+            catch (Exception exc)
+            {
+                this.logger.LogError(
+                    exc,
+                    $"Message {ea.DeliveryTag} threw exception, will nack.");
+                model.BasicNack(ea.DeliveryTag, false, this.method.ConsumerAttributes.NackOnException);
+            }
         }
 
         private object[] GetParameterList(ConsumerMethod method, BasicDeliverEventArgs eventArgs, IModel model)
