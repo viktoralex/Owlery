@@ -138,5 +138,45 @@ namespace Owlery.Tests.Models
             );
             model.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ManualAckShouldStartConsumerWithoutAutoAck()
+        {
+            // GIVEN
+            var queueName = "queueName";
+
+            Mock<IModel> model = new Mock<IModel>();
+            var logger = TestLogger.CreateXUnit<RabbitConsumer>(output);
+
+            RabbitConsumerAttribute consumerAttribute = new RabbitConsumerAttribute(
+                queueName,
+                acknowledgementType: AcknowledgementType.ManualAck,
+                false
+            );
+
+            ConsumerMethod method = new ConsumerMethod(
+                this.GetType().GetMethods().First(),  // Just use any old method
+                this.GetType(),
+                consumerAttribute,
+                null
+            );
+
+            // WHEN
+            new RabbitConsumer(method, model.Object, null, logger);
+
+            // THEN
+            model.Verify(m =>
+                m.BasicConsume(
+                    It.Is<string>(s => s == queueName),
+                    It.Is<bool>(b => b == false),
+                    It.IsAny<string>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<IDictionary<string, object>>(),
+                    It.IsAny<EventingBasicConsumer>()
+                )
+            );
+            model.VerifyNoOtherCalls();
+        }
     }
 }

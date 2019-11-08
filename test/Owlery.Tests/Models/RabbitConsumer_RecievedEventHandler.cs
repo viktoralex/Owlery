@@ -118,5 +118,55 @@ namespace Owlery.Tests.Models
             );
             mockModel.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldAckOrNackOnManualAcknowledgement()
+        {
+            // GIVEN - A manual ack consumer
+            var serviceCollectionFactory = new ServiceCollection();
+            // Make singleton so we can assert that the method ran
+            serviceCollectionFactory.AddSingleton<ConsumerController>();
+
+            var serviceCollection = serviceCollectionFactory.BuildServiceProvider();
+
+            var consumerMethod = new ConsumerMethod(
+                typeof(ConsumerController).GetMethod("Consume"),
+                typeof(ConsumerController),
+                new RabbitConsumerAttribute(
+                    queueName: "consumerQueue",
+                    acknowledgementType: AcknowledgementType.ManualAck),
+                null
+            );
+
+            var mockModel = new Mock<IModel>();
+            var logger = TestLogger.CreateXUnit<RabbitConsumer>(this.output);
+
+            var eventArgs = new BasicDeliverEventArgs();
+
+            // WHEN - The consumer consumes a message
+            var rabbitConsumer = new RabbitConsumer(
+                consumerMethod,
+                mockModel.Object,
+                serviceCollection,
+                logger
+            );
+            rabbitConsumer.RecievedEventHandler(null, eventArgs);
+
+            // THEN - Neither BasicAck nor BasicNack should be called
+            var service = serviceCollection.GetRequiredService<ConsumerController>();
+            Assert.True(service.ConsumeCalled);
+
+            mockModel.Verify(m => m.BasicConsume(
+                    It.IsAny<string>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<string>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<IDictionary<string, object>>(),
+                    It.IsAny<EventingBasicConsumer>()
+                )
+            );
+            mockModel.VerifyNoOtherCalls();
+        }
     }
 }
