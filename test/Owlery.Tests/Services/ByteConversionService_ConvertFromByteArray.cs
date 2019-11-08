@@ -1,18 +1,25 @@
 using System.Text;
 using Newtonsoft.Json;
-using Owlery.Utils;
+using Owlery.Services;
 using Xunit;
 
-namespace Owlery.Tests.Utils
+namespace Owlery.Tests.Services
 {
-    public class BodyConverter_ConvertFromByteArray
+    public class ByteConversionService_ConvertFromByteArray
     {
+        private readonly ByteConversionService byteConversionService;
+
+        public ByteConversionService_ConvertFromByteArray()
+        {
+            this.byteConversionService = new ByteConversionService();
+        }
+
         [Fact]
         public void ShouldNotChangeByteArray()
         {
             var input = Encoding.UTF8.GetBytes("This will be an array of bytes");
 
-            var result = BodyConverter.ConvertFromByteArray(input, typeof(byte[]));
+            var result = this.byteConversionService.ConvertFromByteArray(input, typeof(byte[]));
 
             Assert.Equal(input, result);
             Assert.Equal(input.GetType(), result.GetType());
@@ -24,7 +31,7 @@ namespace Owlery.Tests.Utils
             var original = "This is a string";
             var input = Encoding.UTF8.GetBytes(original);
 
-            var result = BodyConverter.ConvertFromByteArray(input, typeof(string));
+            var result = this.byteConversionService.ConvertFromByteArray(input, typeof(string));
 
             Assert.Equal(original, result);
             Assert.Equal(typeof(string), result.GetType());
@@ -36,7 +43,7 @@ namespace Owlery.Tests.Utils
             var original = new Thing { Property = 99 };
             var input = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(original));
 
-            var result = BodyConverter.ConvertFromByteArray(input, typeof(Thing));
+            var result = this.byteConversionService.ConvertFromByteArray(input, typeof(Thing));
 
             Assert.Equal(original, result);
             Assert.Equal(typeof(Thing), result.GetType());

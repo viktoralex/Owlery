@@ -8,6 +8,13 @@ namespace Owlery.Services
 {
     public class InvocationParameterService : IInvocationParameterService
     {
+        private readonly IByteConversionService byteConversionService;
+
+        public InvocationParameterService(IByteConversionService byteConversionService)
+        {
+            this.byteConversionService = byteConversionService;
+        }
+
         public object[] GetParameterList(ConsumerMethod method, BasicDeliverEventArgs eventArgs, IModel model)
         {
             List<object> paramList = new List<object>();
@@ -15,7 +22,7 @@ namespace Owlery.Services
             {
                 if (param.IsDefined(typeof(FromBodyAttribute), false))
                 {
-                    paramList.Add(BodyConverter.ConvertFromByteArray(eventArgs.Body, param.ParameterType));
+                    paramList.Add(this.byteConversionService.ConvertFromByteArray(eventArgs.Body, param.ParameterType));
                 }
                 else if (param.IsDefined(typeof(FromDeliveryTagAttribute), false))
                 {

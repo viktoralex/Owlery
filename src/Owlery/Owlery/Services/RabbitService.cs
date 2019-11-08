@@ -6,16 +6,19 @@ namespace Owlery.Services
     public class RabbitService : IRabbitService
     {
         private readonly RabbitConnection rabbitConnection;
+        private readonly IByteConversionService byteConversionService;
 
         public RabbitService(
-            RabbitConnection rabbitConnection)
+            RabbitConnection rabbitConnection,
+            IByteConversionService byteConversionService)
         {
             this.rabbitConnection = rabbitConnection;
+            this.byteConversionService = byteConversionService;
         }
 
         public void Publish(string routingKey, object body, string exchange = null)
         {
-            var bodyBytes = BodyConverter.ConvertToByteArray(body);
+            var bodyBytes = this.byteConversionService.ConvertToByteArray(body);
 
             var model = rabbitConnection.GetModel();
             model.BasicPublish(

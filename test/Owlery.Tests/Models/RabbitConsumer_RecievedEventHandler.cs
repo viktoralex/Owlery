@@ -41,6 +41,7 @@ namespace Owlery.Tests.Models
             var serviceCollectionFactory = new ServiceCollection();
             // Make singleton so we can assert that the method ran
             serviceCollectionFactory.AddSingleton<ConsumerController>();
+            serviceCollectionFactory.AddTransient<IByteConversionService, ByteConversionService>();
             serviceCollectionFactory.AddTransient<IInvocationParameterService, InvocationParameterService>();
 
             var serviceCollection = serviceCollectionFactory.BuildServiceProvider();
@@ -78,6 +79,7 @@ namespace Owlery.Tests.Models
             var serviceCollectionFactory = new ServiceCollection();
             // Make singleton so we can assert that the method ran
             serviceCollectionFactory.AddSingleton<ConsumerController>();
+            serviceCollectionFactory.AddTransient<IByteConversionService, ByteConversionService>();
             serviceCollectionFactory.AddTransient<IInvocationParameterService, InvocationParameterService>();
 
             var serviceCollection = serviceCollectionFactory.BuildServiceProvider();
@@ -129,6 +131,7 @@ namespace Owlery.Tests.Models
             var serviceCollectionFactory = new ServiceCollection();
             // Make singleton so we can assert that the method ran
             serviceCollectionFactory.AddSingleton<ConsumerController>();
+            serviceCollectionFactory.AddTransient<IByteConversionService, ByteConversionService>();
             serviceCollectionFactory.AddTransient<IInvocationParameterService, InvocationParameterService>();
 
             var serviceCollection = serviceCollectionFactory.BuildServiceProvider();

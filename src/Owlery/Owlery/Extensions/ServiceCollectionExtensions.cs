@@ -16,6 +16,7 @@ namespace Owlery.Extensions
             services.AddSingleton<RabbitConnection>();
             services.AddHostedService<BackgroundServiceStarter<RabbitConnection>>();
 
+            services.AddTransient<IByteConversionService, ByteConversionService>();
             services.AddTransient<IDeclarationService, DeclarationService>();
             services.AddTransient<IInvocationParameterService, InvocationParameterService>();
             services.AddTransient<IRabbitService, RabbitService>();

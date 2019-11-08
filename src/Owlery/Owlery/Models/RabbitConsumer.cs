@@ -51,8 +51,8 @@ namespace Owlery.Models
             {
                 using (var scope = this.serviceProvider.CreateScope())
                 {
-                    var conversionService = scope.ServiceProvider.GetRequiredService<IInvocationParameterService>();
-                    var parameters = conversionService.GetParameterList(this.method, ea, model);
+                    var parameterConverter = scope.ServiceProvider.GetRequiredService<IInvocationParameterService>();
+                    var parameters = parameterConverter.GetParameterList(this.method, ea, model);
 
                     var consumerService = scope.ServiceProvider.GetRequiredService(this.method.ParentType);
                     var returned = this.method.Method.Invoke(
@@ -67,6 +67,8 @@ namespace Owlery.Models
 
                     if (this.method.PublisherAttributes != null)
                     {
+                        var byteConverter = scope.ServiceProvider.GetRequiredService<IByteConversionService>();
+
                         this.logger.LogInformation(
                             $"Publishing result of {ea.DeliveryTag} from {this.method.Method.Name} in " +
                             $"{this.method.ParentType.Name} to {this.method.PublisherAttributes.ExchangeName} with " +
@@ -75,7 +77,7 @@ namespace Owlery.Models
                             this.method.PublisherAttributes.ExchangeName,
                             this.method.PublisherAttributes.RoutingKey,
                             null,
-                            BodyConverter.ConvertToByteArray(returned));
+                            byteConverter.ConvertToByteArray(returned));
                     }
 
                     if (this.method.ConsumerAttributes.AcknowledgementType == AcknowledgementType.AckOnPublish)
