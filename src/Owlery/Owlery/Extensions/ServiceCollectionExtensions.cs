@@ -17,6 +17,7 @@ namespace Owlery.Extensions
             services.AddHostedService<BackgroundServiceStarter<RabbitConnection>>();
 
             services.AddTransient<IDeclarationService, DeclarationService>();
+            services.AddTransient<IInvocationParameterService, InvocationParameterService>();
             services.AddTransient<IRabbitService, RabbitService>();
 
             // Find all controllers and register them as transient services

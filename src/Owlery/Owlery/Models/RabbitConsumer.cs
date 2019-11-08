@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Owlery.Services;
 using Owlery.Utils;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -50,9 +51,10 @@ namespace Owlery.Models
             {
                 using (var scope = this.serviceProvider.CreateScope())
                 {
-                    var consumerService = scope.ServiceProvider.GetRequiredService(this.method.ParentType);
+                    var conversionService = scope.ServiceProvider.GetRequiredService<IInvocationParameterService>();
+                    var parameters = conversionService.GetParameterList(this.method, ea, model);
 
-                    var parameters = GetParameterList(this.method, ea, model);
+                    var consumerService = scope.ServiceProvider.GetRequiredService(this.method.ParentType);
                     var returned = this.method.Method.Invoke(
                         consumerService, parameters);
 
@@ -98,48 +100,6 @@ namespace Owlery.Models
                     $"Message {ea.DeliveryTag} threw exception, will nack.");
                 model.BasicNack(ea.DeliveryTag, false, this.method.ConsumerAttributes.NackOnException);
             }
-        }
-
-        private object[] GetParameterList(ConsumerMethod method, BasicDeliverEventArgs eventArgs, IModel model)
-        {
-            List<object> paramList = new List<object>();
-            foreach (var param in method.Method.GetParameters())
-            {
-                if (param.IsDefined(typeof(FromBodyAttribute), false))
-                {
-                    paramList.Add(BodyConverter.ConvertFromByteArray(eventArgs.Body, param.ParameterType));
-                }
-                else if (param.IsDefined(typeof(FromDeliveryTagAttribute), false))
-                {
-                    paramList.Add(eventArgs.DeliveryTag);
-                }
-                else if (param.IsDefined(typeof(FromModelAttribute), false))
-                {
-                    paramList.Add(model);
-                }
-                else if (param.IsDefined(typeof(FromBasicPropertiesAttribute), false))
-                {
-                    paramList.Add(eventArgs.BasicProperties);
-                }
-                else if (param.IsDefined(typeof(FromConsumerTagAttribute), false))
-                {
-                    paramList.Add(eventArgs.ConsumerTag);
-                }
-                else if (param.IsDefined(typeof(FromExchangeAttribute), false))
-                {
-                    paramList.Add(eventArgs.Exchange);
-                }
-                else if (param.IsDefined(typeof(FromRedeliveredAttribute), false))
-                {
-                    paramList.Add(eventArgs.Redelivered);
-                }
-                else if (param.IsDefined(typeof(FromRoutingKeyAttribute), false))
-                {
-                    paramList.Add(eventArgs.RoutingKey);
-                }
-            }
-
-            return paramList.ToArray();
         }
     }
 }

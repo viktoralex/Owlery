@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Owlery.Models;
+using Owlery.Services;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Xunit;
@@ -40,6 +41,7 @@ namespace Owlery.Tests.Models
             var serviceCollectionFactory = new ServiceCollection();
             // Make singleton so we can assert that the method ran
             serviceCollectionFactory.AddSingleton<ConsumerController>();
+            serviceCollectionFactory.AddTransient<IInvocationParameterService, InvocationParameterService>();
 
             var serviceCollection = serviceCollectionFactory.BuildServiceProvider();
 
@@ -76,6 +78,7 @@ namespace Owlery.Tests.Models
             var serviceCollectionFactory = new ServiceCollection();
             // Make singleton so we can assert that the method ran
             serviceCollectionFactory.AddSingleton<ConsumerController>();
+            serviceCollectionFactory.AddTransient<IInvocationParameterService, InvocationParameterService>();
 
             var serviceCollection = serviceCollectionFactory.BuildServiceProvider();
 
@@ -126,6 +129,7 @@ namespace Owlery.Tests.Models
             var serviceCollectionFactory = new ServiceCollection();
             // Make singleton so we can assert that the method ran
             serviceCollectionFactory.AddSingleton<ConsumerController>();
+            serviceCollectionFactory.AddTransient<IInvocationParameterService, InvocationParameterService>();
 
             var serviceCollection = serviceCollectionFactory.BuildServiceProvider();
 
