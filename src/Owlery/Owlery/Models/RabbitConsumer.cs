@@ -9,6 +9,7 @@ using Owlery.Services;
 using Owlery.Utils;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Exceptions;
 
 namespace Owlery.Models
 {
@@ -95,7 +96,7 @@ namespace Owlery.Models
                     $"Message {ea.DeliveryTag} threw exception when consumer was invoked, will nack.");
                 model.BasicNack(ea.DeliveryTag, false, this.method.ConsumerAttributes.NackOnException);
             }
-            catch (Exception exc)
+            catch (RabbitMQClientException exc)
             {
                 this.logger.LogError(
                     exc,
