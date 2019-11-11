@@ -1,6 +1,10 @@
 Owlery
 ======
 
+![GitHub](https://img.shields.io/github/license/viktoralex/owlery)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/viktoralex/owlery?label=github&color=informational)](https://github.com/viktoralex/Owlery)
+[![Nuget](https://img.shields.io/nuget/v/owlery?color=informational)](https://www.nuget.org/packages/Owlery)
+
 The Owlery library provides .NET Core developers the ability to consume and
 publish to RabbitMQ queues with the same ease as creating a new ApiController.
 
