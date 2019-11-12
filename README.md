@@ -117,26 +117,26 @@ In `appsettings.json` or any other configuration source define the following
 {
   ...
   "Owlery": {
-    "Queues": [
-      {
+    "Queues": {
+      "TestQueue": {
         "QueueName": "tester.test"
       },
-      {
+      "AnotherQueue": {
         "QueueName": "tester.another.test"
       }
-    ],
-    "Exchanges": [
-      {
+    },
+    "Exchanges": {
+      "AnExchange": {
         "ExchangeName": "testExc"
       }
-    ],
-    "Bindings": [
-      {
+    },
+    "Bindings": {
+      "ABinding": {
         "QueueName": "tester.another.test",
         "ExchangeName": "testExc",
         "RoutingKey": "tester.routingKey"
       }
-    ]
+    }
   }
 }
 ```
@@ -154,4 +154,30 @@ public void ConfigureServices(IServiceCollection services)
     services.AddRabbitControllers(Configuration.GetSection("Owlery"));
     ...
 }
+```
+
+## Using names and keys defined in configuration
+
+We can use queue and exchange names as well as routing keys defined in configuration.
+If we assume the config is defined as it is in the Declaring queues section then
+the following works.
+
+```C#
+[RabbitConsumer(queueName: "{Owlery:Queues:TestQueue:QueueName}")]
+[RabbitPublisher(routingKey: "{Owlery:Bindings:ABinding:RoutingKey}", exchangeName: "{Owlery:Bindings:ABinding:ExchangeName}")]
+```
+
+We can of course reference any settings key. For example with the following configuration
+and consumer definition.
+
+```json
+{
+  "MyQueueSettings": {
+    "Queue": "name.of.queue"
+  }
+}
+```
+
+```C#
+[RabbitConsumer(queueName: "{MyQueueSettings:Queue}")]
 ```
