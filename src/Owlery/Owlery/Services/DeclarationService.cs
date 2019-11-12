@@ -18,13 +18,13 @@ namespace Owlery.Services
 
         public void DeclareAll(IModel model)
         {
-            foreach (var queueSettings in this.settings.Queues)
+            foreach (var queueSettings in this.settings.Queues.Values)
                 this.QueueDeclare(model, queueSettings);
 
-            foreach (var exchangeSettings in this.settings.Exchanges)
+            foreach (var exchangeSettings in this.settings.Exchanges.Values)
                 this.ExchangeDeclare(model, exchangeSettings);
 
-            foreach (var bindingSettings in this.settings.Bindings)
+            foreach (var bindingSettings in this.settings.Bindings.Values)
                 this.QueueBind(model, bindingSettings);
         }
 

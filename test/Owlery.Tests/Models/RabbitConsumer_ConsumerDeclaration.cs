@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Owlery.Models;
@@ -42,7 +43,7 @@ namespace Owlery.Tests.Models
             );
 
             // WHEN
-            new RabbitConsumer(method, model.Object, null, logger);
+            new RabbitConsumer(method, model.Object, null, null, logger);
 
             // THEN
             model.Verify(m =>
@@ -82,7 +83,7 @@ namespace Owlery.Tests.Models
             );
 
             // WHEN
-            new RabbitConsumer(method, model.Object, null, logger);
+            new RabbitConsumer(method, model.Object, null, null, logger);
 
             // THEN
             model.Verify(m =>
@@ -122,7 +123,7 @@ namespace Owlery.Tests.Models
             );
 
             // WHEN
-            new RabbitConsumer(method, model.Object, null, logger);
+            new RabbitConsumer(method, model.Object, null, null, logger);
 
             // THEN
             model.Verify(m =>
@@ -162,7 +163,7 @@ namespace Owlery.Tests.Models
             );
 
             // WHEN
-            new RabbitConsumer(method, model.Object, null, logger);
+            new RabbitConsumer(method, model.Object, null, null, logger);
 
             // THEN
             model.Verify(m =>
@@ -177,6 +178,54 @@ namespace Owlery.Tests.Models
                 )
             );
             model.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldStartConsumerOnQueueNameFromConfiguration()
+        {
+            // GIVEN
+            var configKey = "Config:Key:For:QueueName";
+            var configVal = "nameOfQueue";
+            var configDict = new Dictionary<string, string>() {
+                {configKey, configVal}
+            };
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(configDict)
+                .Build();
+
+            Mock<IModel> model = new Mock<IModel>();
+            var logger = TestLogger.CreateXUnit<RabbitConsumer>(output);
+
+            RabbitConsumerAttribute consumerAttribute = new RabbitConsumerAttribute(
+                "{" + configKey + "}",
+                acknowledgementType: AcknowledgementType.ManualAck,
+                false
+            );
+
+            ConsumerMethod method = new ConsumerMethod(
+                this.GetType().GetMethods().First(),  // Just use any old method
+                this.GetType(),
+                consumerAttribute,
+                null
+            );
+
+            // WHEN
+            new RabbitConsumer(method, model.Object, configuration, null, logger);
+
+            // THEN
+            model.Verify(m =>
+                m.BasicConsume(
+                    It.Is<string>(s => s == configVal),
+                    It.Is<bool>(b => b == false),
+                    It.IsAny<string>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<IDictionary<string, object>>(),
+                    It.IsAny<EventingBasicConsumer>()
+                )
+            );
+            model.VerifyNoOtherCalls();
+
         }
     }
 }

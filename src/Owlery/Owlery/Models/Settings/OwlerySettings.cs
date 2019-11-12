@@ -10,8 +10,8 @@ namespace Owlery.Models.Settings
         public string HostName { get; set; }
         public int? Port { get; set; }
 
-        public List<QueueSettings> Queues { get; set; } = new List<QueueSettings>();
-        public List<ExchangeSettings> Exchanges { get; set; } = new List<ExchangeSettings>();
-        public List<BindingSettings> Bindings { get; set; } = new List<BindingSettings>();
+        public Dictionary<string, QueueSettings> Queues { get; set; } = new Dictionary<string, QueueSettings>();
+        public Dictionary<string, ExchangeSettings> Exchanges { get; set; } = new Dictionary<string, ExchangeSettings>();
+        public Dictionary<string, BindingSettings> Bindings { get; set; } = new Dictionary<string, BindingSettings>();
     }
 }
