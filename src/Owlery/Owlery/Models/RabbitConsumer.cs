@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -17,29 +18,39 @@ namespace Owlery.Models
     {
         private readonly ConsumerMethod method;
         private readonly IModel model;
+        private readonly IConfiguration configuration;
         private readonly IServiceProvider serviceProvider;
         private readonly ILogger logger;
 
         public RabbitConsumer(
             ConsumerMethod method,
             IModel model,
+            IConfiguration configuration,
             IServiceProvider serviceProvider,
             ILogger<RabbitConsumer> logger)
         {
             this.method = method;
             this.model = model;
+            this.configuration = configuration;
             this.serviceProvider = serviceProvider;
             this.logger = logger;
 
             this.logger.LogInformation(
-                $"Registering method {this.method.Method.Name} in {this.method.ParentType.Name} as consumer" +
-                $"{(this.method.PublisherAttributes == null ? "" : " and publisher")}.");
+                $"Registering method {this.method.Method.Name} in {this.method.ParentType.Name} as consumer " +
+                $"of queue {ConsumerQueueName()}.");
 
             var rabbitConsumer = new EventingBasicConsumer(model);
             rabbitConsumer.Received += this.RecievedEventHandler;
 
             var autoAck = this.method.ConsumerAttributes.AcknowledgementType == AcknowledgementType.AutoAck;
-            model.BasicConsume(this.method.ConsumerAttributes.QueueName, autoAck, consumerTag: "", noLocal: false, exclusive: false, arguments: null, rabbitConsumer);
+            model.BasicConsume(
+                ConsumerQueueName(),
+                autoAck,
+                consumerTag: "",
+                noLocal: false,
+                exclusive: false,
+                arguments: null,
+                rabbitConsumer);
         }
 
         public void RecievedEventHandler(object ch, BasicDeliverEventArgs ea)
@@ -72,13 +83,14 @@ namespace Owlery.Models
 
                         this.logger.LogInformation(
                             $"Publishing result of {ea.DeliveryTag} from {this.method.Method.Name} in " +
-                            $"{this.method.ParentType.Name} to {this.method.PublisherAttributes.ExchangeName} with " +
-                            $"{this.method.PublisherAttributes.RoutingKey}");
+                            $"{this.method.ParentType.Name} to {PublisherExchangeName()} with " +
+                            $"{PublisherRoutingKey()}");
                         model.BasicPublish(
-                            this.method.PublisherAttributes.ExchangeName,
-                            this.method.PublisherAttributes.RoutingKey,
-                            null,
-                            byteConverter.ConvertToByteArray(returned));
+                            exchange: PublisherExchangeName(),
+                            routingKey: PublisherRoutingKey(),
+                            mandatory: true,
+                            basicProperties: null,
+                            body: byteConverter.ConvertToByteArray(returned));
                     }
 
                     if (this.method.ConsumerAttributes.AcknowledgementType == AcknowledgementType.AckOnPublish)
@@ -103,6 +115,27 @@ namespace Owlery.Models
                     $"Message {ea.DeliveryTag} threw exception, will nack.");
                 model.BasicNack(ea.DeliveryTag, false, this.method.ConsumerAttributes.NackOnException);
             }
+        }
+
+        private string ConsumerQueueName()
+        {
+            return ConfigurationFormatter.FormatWithConfig(
+                this.method.ConsumerAttributes.QueueName,
+                this.configuration);
+        }
+
+        private string PublisherExchangeName()
+        {
+            return ConfigurationFormatter.FormatWithConfig(
+                this.method.PublisherAttributes.ExchangeName,
+                this.configuration);
+        }
+
+        private string PublisherRoutingKey()
+        {
+            return ConfigurationFormatter.FormatWithConfig(
+                this.method.PublisherAttributes.RoutingKey,
+                this.configuration);
         }
     }
 }

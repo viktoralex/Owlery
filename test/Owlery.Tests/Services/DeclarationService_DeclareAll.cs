@@ -32,13 +32,16 @@ namespace Owlery.Tests.Services
             var arguments = new Dictionary<string, object>();
 
             var settings = new OwlerySettings {
-                Queues = new List<QueueSettings>() {
-                    new QueueSettings() {
-                        QueueName = queueName,
-                        Durable = durable,
-                        Exclusive = exclusive,
-                        AutoDelete = autoDelete,
-                        Arguments = arguments,
+                Queues = new Dictionary<string, QueueSettings>() {
+                    {
+                        "Queue",
+                        new QueueSettings() {
+                            QueueName = queueName,
+                            Durable = durable,
+                            Exclusive = exclusive,
+                            AutoDelete = autoDelete,
+                            Arguments = arguments,
+                        }
                     }
                 }
             };
@@ -74,13 +77,16 @@ namespace Owlery.Tests.Services
             var arguments = new Dictionary<string, object>();
 
             var settings = new OwlerySettings {
-                Exchanges = new List<ExchangeSettings>() {
-                    new ExchangeSettings() {
-                        ExchangeName = exchangeName,
-                        Type = type,
-                        Durable = durable,
-                        AutoDelete = autoDelete,
-                        Arguments = arguments,
+                Exchanges = new Dictionary<string, ExchangeSettings>() {
+                    {
+                        "Exchange",
+                        new ExchangeSettings() {
+                            ExchangeName = exchangeName,
+                            Type = type,
+                            Durable = durable,
+                            AutoDelete = autoDelete,
+                            Arguments = arguments,
+                        }
                     }
                 }
             };
@@ -115,12 +121,15 @@ namespace Owlery.Tests.Services
             var arguments = new Dictionary<string, object>();
 
             var settings = new OwlerySettings {
-                Bindings = new List<BindingSettings>() {
-                    new BindingSettings() {
-                        QueueName = queueName,
-                        ExchangeName = exchangeName,
-                        RoutingKey = routingKey,
-                        Arguments = arguments,
+                Bindings = new Dictionary<string, BindingSettings>() {
+                    {
+                        "Binding",
+                        new BindingSettings() {
+                            QueueName = queueName,
+                            ExchangeName = exchangeName,
+                            RoutingKey = routingKey,
+                            Arguments = arguments,
+                        }
                     }
                 }
             };

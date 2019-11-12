@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Owlery.Models.Settings;
 using Owlery.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace Owlery.HostedServices
 {
@@ -17,6 +18,7 @@ namespace Owlery.HostedServices
     {
         private readonly IDeclarationService declarationService;
         private readonly IServiceProvider serviceProvider;
+        private readonly IConfiguration configuration;
         private readonly OwlerySettings settings;
         private readonly ILogger logger;
         private readonly ILoggerFactory loggerFactory;
@@ -27,11 +29,13 @@ namespace Owlery.HostedServices
         public RabbitConnection(
             IDeclarationService declarationService,
             IServiceProvider serviceProvider,
+            IConfiguration configuration,
             IOptions<OwlerySettings> settings,
             ILoggerFactory factory)
         {
             this.declarationService = declarationService;
             this.serviceProvider = serviceProvider;
+            this.configuration = configuration;
             this.settings = settings.Value;
             this.logger = factory.CreateLogger<RabbitConnection>();
             this.loggerFactory = factory;
@@ -56,6 +60,7 @@ namespace Owlery.HostedServices
                     new RabbitConsumer(
                         consumerMethod,
                         model,
+                        this.configuration,
                         this.serviceProvider,
                         this.loggerFactory.CreateLogger<RabbitConsumer>()));
 
