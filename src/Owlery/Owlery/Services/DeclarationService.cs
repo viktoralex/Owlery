@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Owlery.Models.Settings;
@@ -7,6 +8,9 @@ namespace Owlery.Services
 {
     public class DeclarationService : IDeclarationService
     {
+        public static string QUEUE_DEAD_LETTER_EXCHANGE_ARGUMENT = "x-dead-letter-exchange";
+        public static string QUEUE_DEAD_LETTER_ROUTING_KEY_ARGUMENT = "x-dead-letter-routing-key";
+
         private readonly OwlerySettings settings;
         private readonly ILogger<DeclarationService> logger;
 
@@ -31,6 +35,29 @@ namespace Owlery.Services
         private void QueueDeclare(IModel model, QueueSettings settings)
         {
             this.logger.LogInformation($"Declaring queue {settings.QueueName}");
+
+            if (settings.Arguments == null)
+                settings.Arguments = new Dictionary<string, object>();
+
+            if (settings.DeadLetterRoutingKey != null)
+            {
+                if (settings.Arguments.Keys.Contains(QUEUE_DEAD_LETTER_ROUTING_KEY_ARGUMENT))
+                    settings.Arguments.Remove(QUEUE_DEAD_LETTER_ROUTING_KEY_ARGUMENT);
+
+                settings.Arguments.Add(QUEUE_DEAD_LETTER_ROUTING_KEY_ARGUMENT, settings.DeadLetterRoutingKey);
+                // Rabbit will reject routing key only, so default to default exchange
+                if (!settings.Arguments.Keys.Contains(QUEUE_DEAD_LETTER_EXCHANGE_ARGUMENT))
+                    settings.Arguments.Add(QUEUE_DEAD_LETTER_EXCHANGE_ARGUMENT, "");
+            }
+
+            if (settings.DeadLetterExchange != null)
+            {
+                if (settings.Arguments.Keys.Contains(QUEUE_DEAD_LETTER_EXCHANGE_ARGUMENT))
+                    settings.Arguments.Remove(QUEUE_DEAD_LETTER_EXCHANGE_ARGUMENT);
+
+                settings.Arguments.Add(QUEUE_DEAD_LETTER_EXCHANGE_ARGUMENT, settings.DeadLetterExchange);
+            }
+
             model.QueueDeclare(
                 queue: settings.QueueName,
                 durable: settings.Durable,

@@ -8,6 +8,8 @@ namespace Owlery.Models.Settings
         public bool Durable { get; set; } = false;
         public bool Exclusive { get; set; } = true;
         public bool AutoDelete { get; set; } = true;
+        public string DeadLetterRoutingKey { get; set; } = null;
+        public string DeadLetterExchange { get; set; } = null;
         public IDictionary<string, object> Arguments { get; set; } = null;
     }
 }
