@@ -103,17 +103,35 @@ namespace Owlery.Models
             }
             catch (TargetInvocationException exc)
             {
-                this.logger.LogError(
-                    exc.InnerException,
-                    $"Message {ea.DeliveryTag} threw exception when consumer was invoked, will nack.");
-                model.BasicNack(ea.DeliveryTag, false, this.method.ConsumerAttributes.NackOnException);
+                if (this.method.ConsumerAttributes.NackOnException)
+                {
+                    this.logger.LogError(
+                        exc.InnerException,
+                        $"Message {ea.DeliveryTag} threw exception when consumer was invoked, will nack.");
+                    model.BasicNack(ea.DeliveryTag, false, false);
+                }
+                else
+                {
+                    this.logger.LogError(
+                        exc.InnerException,
+                        $"Message {ea.DeliveryTag} threw exception when consumer was invoked.");
+                }
             }
             catch (RabbitMQClientException exc)
             {
-                this.logger.LogError(
-                    exc,
-                    $"Message {ea.DeliveryTag} threw exception, will nack.");
-                model.BasicNack(ea.DeliveryTag, false, this.method.ConsumerAttributes.NackOnException);
+                if (this.method.ConsumerAttributes.NackOnException)
+                {
+                    this.logger.LogError(
+                        exc,
+                        $"Message {ea.DeliveryTag} threw exception, will nack.");
+                    model.BasicNack(ea.DeliveryTag, false, false);
+                }
+                else
+                {
+                    this.logger.LogError(
+                        exc,
+                        $"Message {ea.DeliveryTag} threw exception.");
+                }
             }
         }
 

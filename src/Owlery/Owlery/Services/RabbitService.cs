@@ -20,6 +20,9 @@ namespace Owlery.Services
         {
             var bodyBytes = this.byteConversionService.ConvertToByteArray(body);
 
+            if (exchange == null)
+                exchange = "";
+
             var model = rabbitConnection.GetModel();
             model.BasicPublish(
                 exchange: exchange,
