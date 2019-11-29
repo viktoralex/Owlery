@@ -43,6 +43,10 @@ namespace Owlery.HostedServices
             this.consumers = new List<RabbitConsumer>();
         }
 
+        ~RabbitConnection(){
+            this.connection.Close();
+        }
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
             this.logger.LogInformation("Creating RabbitMQ connection.");
@@ -102,5 +106,7 @@ namespace Owlery.HostedServices
 
             return factory;
         }
+
+
     }
 }
