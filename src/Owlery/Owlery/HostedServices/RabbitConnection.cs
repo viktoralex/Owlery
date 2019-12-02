@@ -44,7 +44,7 @@ namespace Owlery.HostedServices
         }
 
         ~RabbitConnection(){
-            Dispose()
+            Dispose();
         }
 
         public void Dispose() {
@@ -112,7 +112,5 @@ namespace Owlery.HostedServices
 
             return factory;
         }
-
-
     }
 }
