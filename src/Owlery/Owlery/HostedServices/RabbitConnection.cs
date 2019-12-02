@@ -14,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Owlery.HostedServices
 {
-    public class RabbitConnection : IHostedService
+    public class RabbitConnection : IHostedService, IDisposable
     {
         private readonly IDeclarationService declarationService;
         private readonly IServiceProvider serviceProvider;
@@ -41,6 +41,16 @@ namespace Owlery.HostedServices
             this.loggerFactory = factory;
 
             this.consumers = new List<RabbitConsumer>();
+        }
+
+        ~RabbitConnection(){
+            Dispose()
+        }
+
+        public void Dispose() {
+            if (this.connection != null) {
+                this.connection.Close();
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -102,5 +112,7 @@ namespace Owlery.HostedServices
 
             return factory;
         }
+
+
     }
 }
