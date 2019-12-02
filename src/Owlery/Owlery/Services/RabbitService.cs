@@ -23,14 +23,16 @@ namespace Owlery.Services
             if (exchange == null)
                 exchange = "";
 
-            var model = rabbitConnection.GetModel();
-            model.BasicPublish(
-                exchange: exchange,
-                routingKey: routingKey,
-                mandatory: false,
-                basicProperties: null,
-                body: bodyBytes
-            );
+            using (var model = rabbitConnection.GetModel())
+            {
+                model.BasicPublish(
+                    exchange: exchange,
+                    routingKey: routingKey,
+                    mandatory: false,
+                    basicProperties: null,
+                    body: bodyBytes
+                );
+            }
         }
     }
 }
