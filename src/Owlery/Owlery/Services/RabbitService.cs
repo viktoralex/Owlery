@@ -1,5 +1,6 @@
 using Owlery.HostedServices;
 using Owlery.Utils;
+using RabbitMQ.Client;
 
 namespace Owlery.Services
 {
@@ -16,7 +17,7 @@ namespace Owlery.Services
             this.byteConversionService = byteConversionService;
         }
 
-        public void Publish(string routingKey, object body, string exchange = null)
+        public void Publish(string routingKey, object body, string exchange = null, IBasicProperties basicProperties = null)
         {
             var bodyBytes = this.byteConversionService.ConvertToByteArray(body);
 
@@ -29,7 +30,7 @@ namespace Owlery.Services
                     exchange: exchange,
                     routingKey: routingKey,
                     mandatory: false,
-                    basicProperties: null,
+                    basicProperties: basicProperties,
                     body: bodyBytes
                 );
             }
