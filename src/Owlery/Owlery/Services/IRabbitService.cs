@@ -1,9 +1,11 @@
+using Owlery.Models;
 using RabbitMQ.Client;
 
 namespace Owlery.Services
 {
     public interface IRabbitService
     {
-         void Publish(string routingKey, object body, string exchange = null, IBasicProperties basicProperties = null);
+         void Publish(object body, string routingKey, string exchange = null);
+         void Publish(RabbitMessage message, string routingKey, string exchange = null);
     }
 }
