@@ -7,22 +7,22 @@ namespace Owlery.Services
     {
         public IBasicProperties ApplyMessageProperties(RabbitMessage message, IBasicProperties properties)
         {
-            properties.AppId = message.AppId ?? properties.AppId;
-            properties.ClusterId = message.ClusterId ?? properties.ClusterId;
-            properties.ContentEncoding = message.ContentEncoding ?? properties.ContentEncoding;
-            properties.ContentType = message.ContentType ?? properties.ContentType;
-            properties.CorrelationId = message.CorrelationId ?? properties.CorrelationId;
-            properties.DeliveryMode = message.DeliveryMode ?? properties.DeliveryMode;
-            properties.Expiration = message.Expiration ?? properties.Expiration;
-            properties.Headers = message.Headers ?? properties.Headers;
-            properties.MessageId = message.MessageId ?? properties.MessageId;
-            properties.Persistent = message.Persistent ?? properties.Persistent;
-            properties.Priority = message.Priority ?? properties.Priority;
-            properties.ReplyTo = message.ReplyTo ?? properties.ReplyTo;
-            properties.ReplyToAddress = message.ReplyToAddress ?? properties.ReplyToAddress;
-            properties.Timestamp = message.Timestamp ?? properties.Timestamp;
-            properties.Type = message.Type ?? properties.Type;
-            properties.UserId = message.UserId ?? properties.UserId;
+            if (message.AppId != null) properties.AppId = message.AppId;
+            if (message.ClusterId != null) properties.ClusterId = message.ClusterId;
+            if (message.ContentEncoding != null) properties.ContentEncoding = message.ContentEncoding;
+            if (message.ContentType != null) properties.ContentType = message.ContentType;
+            if (message.CorrelationId != null) properties.CorrelationId = message.CorrelationId;
+            if (message.DeliveryMode.HasValue) properties.DeliveryMode = message.DeliveryMode.Value;
+            if (message.Expiration != null) properties.Expiration = message.Expiration;
+            if (message.Headers != null) properties.Headers = message.Headers;
+            if (message.MessageId != null) properties.MessageId = message.MessageId;
+            if (message.Persistent.HasValue) properties.Persistent = message.Persistent.Value;
+            if (message.Priority.HasValue) properties.Priority = message.Priority.Value;
+            if (message.ReplyTo != null) properties.ReplyTo = message.ReplyTo;
+            if (message.ReplyToAddress != null) properties.ReplyToAddress = message.ReplyToAddress;
+            if (message.Timestamp.HasValue) properties.Timestamp = message.Timestamp.Value;
+            if (message.Type != null) properties.Type = message.Type;
+            if (message.UserId != null) properties.UserId = message.UserId;
 
             return properties;
         }
