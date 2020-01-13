@@ -32,11 +32,14 @@ namespace Owlery.Services
 
             using (var model = rabbitConnection.GetModel())
             {
+                var basicProperties = model.CreateBasicProperties();
+                this.basicPropertiesHandler.ApplySettingsProperties(basicProperties);
+
                 model.BasicPublish(
                     exchange: exchange,
                     routingKey: routingKey,
                     mandatory: false,
-                    basicProperties: null,
+                    basicProperties: basicProperties,
                     body: bodyBytes
                 );
             }
@@ -51,7 +54,9 @@ namespace Owlery.Services
 
             using (var model = rabbitConnection.GetModel())
             {
-                var basicProperties = this.basicPropertiesHandler.ApplyMessageProperties(message, model.CreateBasicProperties());
+                var basicProperties = model.CreateBasicProperties();
+                this.basicPropertiesHandler.ApplySettingsProperties(basicProperties);
+                this.basicPropertiesHandler.ApplyMessageProperties(message, basicProperties);
 
                 model.BasicPublish(
                     exchange: exchange,

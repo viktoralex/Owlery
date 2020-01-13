@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using Moq;
 using Owlery.Models;
+using Owlery.Models.Settings;
 using Owlery.Services;
 using RabbitMQ.Client;
 using Xunit;
@@ -9,6 +11,14 @@ namespace Owlery.Tests.Services
 {
     public class BasicPropertiesHandler_ApplyMessageProperties
     {
+        private IOptions<OwlerySettings> settings;
+
+        public BasicPropertiesHandler_ApplyMessageProperties()
+        {
+            this.settings = Options.Create<OwlerySettings>(new OwlerySettings {
+            });
+        }
+
         [Fact]
         public void ShouldApplyNonNullProperties()
         {
@@ -35,10 +45,10 @@ namespace Owlery.Tests.Services
 
             Mock<IBasicProperties> mockBasicProperties = new Mock<IBasicProperties>();
 
-            var handler = new BasicPropertiesHandler();
+            var handler = new BasicPropertiesHandler(this.settings);
 
             // WHEN - ApplyMessageProperties is run with the message and a mock basic properties
-            var properties = handler.ApplyMessageProperties(message, mockBasicProperties.Object);
+            handler.ApplyMessageProperties(message, mockBasicProperties.Object);
 
             // THEN - Each properties of the rabbit message should be applied
             mockBasicProperties.VerifySet(p => p.AppId = message.AppId);
@@ -86,10 +96,10 @@ namespace Owlery.Tests.Services
 
             Mock<IBasicProperties> mockBasicProperties = new Mock<IBasicProperties>();
 
-            var handler = new BasicPropertiesHandler();
+            var handler = new BasicPropertiesHandler(this.settings);
 
             // WHEN - ApplyMessageProperties is run with the message and a mock basic properties
-            var properties = handler.ApplyMessageProperties(message, mockBasicProperties.Object);
+            handler.ApplyMessageProperties(message, mockBasicProperties.Object);
 
             // THEN - No properties of the rabbit message should be applied
             mockBasicProperties.VerifyNoOtherCalls();

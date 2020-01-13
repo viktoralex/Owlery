@@ -5,6 +5,7 @@ namespace Owlery.Services
 {
     public interface IBasicPropertiesHandler
     {
-         IBasicProperties ApplyMessageProperties(RabbitMessage message, IBasicProperties properties);
+        void ApplySettingsProperties(IBasicProperties properties);
+        void ApplyMessageProperties(RabbitMessage message, IBasicProperties properties);
     }
 }

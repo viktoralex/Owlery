@@ -1,11 +1,25 @@
+using Microsoft.Extensions.Options;
 using Owlery.Models;
+using Owlery.Models.Settings;
 using RabbitMQ.Client;
 
 namespace Owlery.Services
 {
     public class BasicPropertiesHandler : IBasicPropertiesHandler
     {
-        public IBasicProperties ApplyMessageProperties(RabbitMessage message, IBasicProperties properties)
+        private readonly OwlerySettings settings;
+
+        public BasicPropertiesHandler(IOptions<OwlerySettings> settings)
+        {
+            this.settings = settings.Value;
+        }
+
+        public void ApplySettingsProperties(IBasicProperties properties)
+        {
+            if (settings.AppId != null) properties.AppId = settings.AppId;
+        }
+
+        public void ApplyMessageProperties(RabbitMessage message, IBasicProperties properties)
         {
             if (message.AppId != null) properties.AppId = message.AppId;
             if (message.ClusterId != null) properties.ClusterId = message.ClusterId;
@@ -23,8 +37,6 @@ namespace Owlery.Services
             if (message.Timestamp.HasValue) properties.Timestamp = message.Timestamp.Value;
             if (message.Type != null) properties.Type = message.Type;
             if (message.UserId != null) properties.UserId = message.UserId;
-
-            return properties;
         }
     }
 }

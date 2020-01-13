@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Owlery.Models.Settings;
 using Owlery.Services;
 using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace Owlery.HostedServices
 {
@@ -58,7 +59,7 @@ namespace Owlery.HostedServices
             this.logger.LogInformation("Creating RabbitMQ connection.");
 
             var factory = RabbitConnectionFactory();
-            this.connection = factory.CreateConnection();
+            this.connection = factory.CreateConnection(CreateConnectionId());
             var model = this.connection.CreateModel();
 
             this.declarationService.DeclareAll(model);
@@ -111,6 +112,16 @@ namespace Owlery.HostedServices
                 factory.Port = this.settings.Port.Value;
 
             return factory;
+        }
+
+        private string CreateConnectionId()
+        {
+            var projectName = Assembly.GetCallingAssembly().GetName().Name;
+
+            if (this.settings.AppId != null)
+                projectName = this.settings.AppId;
+
+            return $"{projectName}#{this.GetHashCode()}";
         }
     }
 }
