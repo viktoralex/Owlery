@@ -19,6 +19,7 @@ namespace Owlery.Extensions
             services.AddTransient<IByteConversionService, ByteConversionService>();
             services.AddTransient<IDeclarationService, DeclarationService>();
             services.AddTransient<IInvocationParameterService, InvocationParameterService>();
+            services.AddTransient<IBasicPropertiesHandler, BasicPropertiesHandler>();
             services.AddTransient<IRabbitService, RabbitService>();
 
             // Find all controllers and register them as transient services
