@@ -15,7 +15,7 @@ using System.Reflection;
 
 namespace Owlery.HostedServices
 {
-    public class RabbitConnection : IHostedService, IDisposable
+    public class RabbitConnection : IHostedService, IDisposable, IRabbitModelAccessor
     {
         private readonly IDeclarationService declarationService;
         private readonly IServiceProvider serviceProvider;

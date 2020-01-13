@@ -14,6 +14,7 @@ namespace Owlery.Extensions
             // Add RabbitConnection as singleton to allow other services to
             // access it.
             services.AddSingleton<RabbitConnection>();
+            services.AddSingleton<IRabbitModelAccessor, RabbitConnection>();
             services.AddHostedService<BackgroundServiceStarter<RabbitConnection>>();
 
             services.AddTransient<IByteConversionService, ByteConversionService>();

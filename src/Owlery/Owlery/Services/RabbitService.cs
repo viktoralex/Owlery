@@ -7,16 +7,16 @@ namespace Owlery.Services
 {
     public class RabbitService : IRabbitService
     {
-        private readonly RabbitConnection rabbitConnection;
+        private readonly IRabbitModelAccessor rabbitModelAccessor;
         private readonly IByteConversionService byteConversionService;
         private readonly IBasicPropertiesHandler basicPropertiesHandler;
 
         public RabbitService(
-            RabbitConnection rabbitConnection,
+            IRabbitModelAccessor rabbitModelAccessor,
             IByteConversionService byteConversionService,
             IBasicPropertiesHandler basicPropertiesHandler)
         {
-            this.rabbitConnection = rabbitConnection;
+            this.rabbitModelAccessor = rabbitModelAccessor;
             this.byteConversionService = byteConversionService;
             this.basicPropertiesHandler = basicPropertiesHandler;
         }
@@ -28,7 +28,7 @@ namespace Owlery.Services
             if (exchange == null)
                 exchange = "";
 
-            using (var model = rabbitConnection.GetModel())
+            using (var model = rabbitModelAccessor.GetModel())
             {
                 var basicProperties = model.CreateBasicProperties();
                 this.basicPropertiesHandler.ApplySettingsProperties(basicProperties);
@@ -50,7 +50,7 @@ namespace Owlery.Services
             if (exchange == null)
                 exchange = "";
 
-            using (var model = rabbitConnection.GetModel())
+            using (var model = rabbitModelAccessor.GetModel())
             {
                 var basicProperties = model.CreateBasicProperties();
                 this.basicPropertiesHandler.ApplySettingsProperties(basicProperties);
