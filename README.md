@@ -101,10 +101,25 @@ public ClassConstructor(
 Then we can use the `Publish` method to publish the message
 
 ```C#
-this.rabbitService.Publish(routingKey: "tester.test", body: "Message body", exchange: "");
+this.rabbitService.Publish(body: "Message body", routingKey: "tester.test", exchange: "");
 ```
 
 But we can use any JSONSerializable object as the body, or an array of bytes directly.
+
+If we need to apply any custom properties to the message being published we can
+pass a `RabbitMessage` to the `Publish` method. The following is an example of
+how to apply custom headers to a message:
+
+```C#
+RabbitMessage message = new RabbitMessage {
+    Body = "Message body",
+    Headers = new Dictionary<string, object> {
+        {"x-origin", "Origin of message"},
+    },
+};
+
+this.rabbitService.Publish(message, "tester.test");
+```
 
 ## Declaring queues
 
