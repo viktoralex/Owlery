@@ -8,7 +8,6 @@ namespace Owlery.Services
     public class RabbitService : IRabbitService
     {
         private readonly RabbitConnection rabbitConnection;
-        private readonly IModel rabbitChannel;
         private readonly IByteConversionService byteConversionService;
         private readonly IBasicPropertiesHandler basicPropertiesHandler;
 
@@ -18,7 +17,6 @@ namespace Owlery.Services
             IBasicPropertiesHandler basicPropertiesHandler)
         {
             this.rabbitConnection = rabbitConnection;
-            this.rabbitChannel = rabbitConnection.GetModel();
             this.byteConversionService = byteConversionService;
             this.basicPropertiesHandler = basicPropertiesHandler;
         }
