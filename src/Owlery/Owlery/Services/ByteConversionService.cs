@@ -1,6 +1,6 @@
 using System;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Owlery.Services
 {
@@ -17,9 +17,7 @@ namespace Owlery.Services
             else if (type == typeof(string))
                 return Encoding.UTF8.GetString(arr);
 
-            return JsonConvert.DeserializeObject(
-                Encoding.UTF8.GetString(arr),
-                type);
+            return JsonSerializer.Deserialize(arr, type);
         }
 
         public byte[] ConvertToByteArray(object returned)
@@ -33,7 +31,7 @@ namespace Owlery.Services
             if (returned.GetType() == typeof(string))
                 return Encoding.UTF8.GetBytes((string)returned);
 
-            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(returned));
+            return Encoding.UTF8.GetBytes(JsonSerializer.Serialize(returned));
         }
     }
 }

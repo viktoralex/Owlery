@@ -4,7 +4,7 @@
     <PackageId>Owlery</PackageId>
     <Version>1.0.4</Version>
     <Authors>Viktor Alex Brynjarsson</Authors>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

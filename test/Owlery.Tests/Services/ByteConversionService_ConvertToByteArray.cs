@@ -1,5 +1,4 @@
 using System.Text;
-using Newtonsoft.Json;
 using Owlery.Services;
 using Xunit;
 
@@ -43,7 +42,7 @@ namespace Owlery.Tests.Services
 
             var result = this.byteConversionService.ConvertToByteArray(input);
 
-            Assert.Equal(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(input)), result);
+            Assert.Equal(@"{""Property"":99}", Encoding.UTF8.GetString(result));
             Assert.Equal(typeof(byte[]), result.GetType());
         }
 

@@ -1,5 +1,4 @@
 using System.Text;
-using Newtonsoft.Json;
 using Owlery.Services;
 using Xunit;
 
@@ -41,7 +40,7 @@ namespace Owlery.Tests.Services
         public void ShouldConvertObjectToJsonAndThenToByteArray()
         {
             var original = new Thing { Property = 99 };
-            var input = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(original));
+            var input = Encoding.UTF8.GetBytes(@"{""Property"":99}");
 
             var result = this.byteConversionService.ConvertFromByteArray(input, typeof(Thing));
 
