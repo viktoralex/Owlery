@@ -28,19 +28,20 @@ namespace Owlery.Services
             if (exchange == null)
                 exchange = "";
 
-            using (var model = rabbitModelAccessor.GetModel())
-            {
-                var basicProperties = model.CreateBasicProperties();
-                this.basicPropertiesHandler.ApplySettingsProperties(basicProperties);
+            var model = rabbitModelAccessor.GetModel();
 
-                model.BasicPublish(
-                    exchange: exchange,
-                    routingKey: routingKey,
-                    mandatory: false,
-                    basicProperties: basicProperties,
-                    body: bodyBytes
-                );
-            }
+            var basicProperties = model.CreateBasicProperties();
+            this.basicPropertiesHandler.ApplySettingsProperties(basicProperties);
+
+            model.BasicPublish(
+                exchange: exchange,
+                routingKey: routingKey,
+                mandatory: false,
+                basicProperties: basicProperties,
+                body: bodyBytes
+            );
+
+            model.Close();
         }
 
         public void Publish(RabbitMessage message, string routingKey, string exchange = null)
@@ -50,20 +51,21 @@ namespace Owlery.Services
             if (exchange == null)
                 exchange = "";
 
-            using (var model = rabbitModelAccessor.GetModel())
-            {
-                var basicProperties = model.CreateBasicProperties();
-                this.basicPropertiesHandler.ApplySettingsProperties(basicProperties);
-                this.basicPropertiesHandler.ApplyMessageProperties(message, basicProperties);
+            var model = rabbitModelAccessor.GetModel();
 
-                model.BasicPublish(
-                    exchange: exchange,
-                    routingKey: routingKey,
-                    mandatory: false,
-                    basicProperties: basicProperties,
-                    body: bodyBytes
-                );
-            }
+            var basicProperties = model.CreateBasicProperties();
+            this.basicPropertiesHandler.ApplySettingsProperties(basicProperties);
+            this.basicPropertiesHandler.ApplyMessageProperties(message, basicProperties);
+
+            model.BasicPublish(
+                exchange: exchange,
+                routingKey: routingKey,
+                mandatory: false,
+                basicProperties: basicProperties,
+                body: bodyBytes
+            );
+
+            model.Close();
         }
     }
 }

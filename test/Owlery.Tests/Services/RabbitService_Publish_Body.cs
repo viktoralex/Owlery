@@ -75,7 +75,7 @@ namespace Owlery.Tests.Services
 
             // THEN - The byte conversion service should have been called with the body
             this.mockModel.Verify(mod => mod.CreateBasicProperties());
-            this.mockModel.Verify(mod => mod.Dispose());
+            this.mockModel.Verify(mod => mod.Close());
             this.mockModel.Verify(
                 mod => mod.BasicPublish(
                     It.Is<string>(s => s == exchange),
