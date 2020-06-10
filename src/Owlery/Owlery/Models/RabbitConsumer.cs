@@ -102,20 +102,18 @@ namespace Owlery.Models
             }
             catch (Exception exc)
             {
-                if (this.method.ConsumerAttributes.NackOnException)
+                bool shouldNack = this.method.ConsumerAttributes.NackOnException && this.method.ConsumerAttributes.AcknowledgementType != AcknowledgementType.AutoAck;
+
+                this.logger.LogError(
+                    exc,
+                    $"Message {ea.DeliveryTag} threw exception, will {(shouldNack ? "" : "not ")}nack.");
+
+                if (shouldNack)
                 {
-                    this.logger.LogError(
-                        exc,
-                        $"Message {ea.DeliveryTag} threw exception, will nack.");
                     model.BasicNack(ea.DeliveryTag, false, false);
                 }
-                else
-                {
-                    this.logger.LogError(
-                        exc,
-                        $"Message {ea.DeliveryTag} threw exception.");
-                }
 
+                // Don't hide any exceptions
                 throw;
             }
         }

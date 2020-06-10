@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -212,7 +213,9 @@ namespace Owlery.Tests.Models
                 serviceCollection,
                 logger
             );
-            rabbitConsumer.RecievedEventHandler(null, eventArgs);
+            Assert.Throws<AlreadyClosedException>(() => {
+                rabbitConsumer.RecievedEventHandler(null, eventArgs);
+            });
 
             // THEN - Ack should be called but it will throw exception so nack will be called
             var service = serviceCollection.GetRequiredService<ConsumerController>();
@@ -243,7 +246,7 @@ namespace Owlery.Tests.Models
         }
 
         [Fact]
-        public void ShouldNackOnInvokcationException()
+        public void ShouldNackOnInvocationException()
         {
             // GIVEN - An ack on invoke consumer, throw exception when acking
             ulong deliveryTag = 99;
@@ -282,7 +285,9 @@ namespace Owlery.Tests.Models
                 serviceCollection,
                 logger
             );
-            rabbitConsumer.RecievedEventHandler(null, eventArgs);
+            Assert.Throws<TargetInvocationException>(() => {
+                rabbitConsumer.RecievedEventHandler(null, eventArgs);
+            });
 
             // THEN - Ack should be called but it will throw exception so nack will be called
             var service = serviceCollection.GetRequiredService<ConsumerController>();
