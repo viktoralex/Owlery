@@ -50,6 +50,7 @@ namespace Owlery.HostedServices
 
         public void Dispose() {
             if (this.connection != null) {
+                this.logger.LogInformation("Closing RabbitMQ connection.");
                 this.connection.Close();
             }
         }
@@ -87,6 +88,7 @@ namespace Owlery.HostedServices
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            this.logger.LogInformation("Closing RabbitMQ connection.");
             this.connection.Close();
 
             return Task.CompletedTask;

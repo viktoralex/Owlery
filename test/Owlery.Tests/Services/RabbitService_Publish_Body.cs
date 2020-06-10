@@ -42,7 +42,8 @@ namespace Owlery.Tests.Services
             var service = new RabbitService(
                 this.mockModelAccessor.Object,
                 this.mockConverter.Object,
-                this.mockPropertiesHandler.Object
+                this.mockPropertiesHandler.Object,
+                TestLogger.Create<RabbitService>()
             );
 
             // WHEN - Publish is called with a body object
@@ -67,7 +68,8 @@ namespace Owlery.Tests.Services
             var service = new RabbitService(
                 this.mockModelAccessor.Object,
                 this.mockConverter.Object,
-                this.mockPropertiesHandler.Object
+                this.mockPropertiesHandler.Object,
+                TestLogger.Create<RabbitService>()
             );
 
             // WHEN - Publish is called with a body object
@@ -95,7 +97,8 @@ namespace Owlery.Tests.Services
             var service = new RabbitService(
                 this.mockModelAccessor.Object,
                 this.mockConverter.Object,
-                this.mockPropertiesHandler.Object
+                this.mockPropertiesHandler.Object,
+                TestLogger.Create<RabbitService>()
             );
 
             // WHEN - Publish is called with a body object
