@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Owlery</PackageId>
-    <Version>1.1.2</Version>
+    <Version>1.1.3</Version>
     <Authors>Viktor Alex Brynjarsson</Authors>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Library</OutputType>
