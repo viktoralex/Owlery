@@ -113,6 +113,9 @@ namespace Owlery.HostedServices
             if (this.settings.Port.HasValue)
                 factory.Port = this.settings.Port.Value;
 
+            if (this.settings.Uri != null)
+                factory.Uri = new Uri(this.settings.Uri);
+
             return factory;
         }
 
